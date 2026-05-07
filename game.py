@@ -5,6 +5,9 @@ import hashlib
 import os
 import jsone
 import winsound
+import json
+import os
+
 # ----------------------------
 # 🟢 КОНСТАНТЫ
 # ----------------------------
@@ -451,13 +454,25 @@ while True:
             "score": final_score
         })
         
-        with open(f"mission_records_{student_name}.json", 'w', encoding='utf-8') as f:
-            json.dump({
-                'score': final_score,
-                'time': total_time,
-                'steps': steps,
-                'date': time.strftime("%Y-%m-%d %H:%M:%S")
-            }, f, indent=2)
+        lb_file = "leaderboard.json"
+        if os.path.exists(lb_file):
+            with open(lb_file, "r", encoding='utf-8') as f:
+                leaderboard = json.load(f)
+
+        else:
+
+            leaderboard = []
+
+        leaderboard.append({"name": student_name, "score": final_score})
+        leaderboard = sorted(leaderboard, key=lambda x: x["score"], reverse=True)[:3]
+
+        with open(lb_file, "w", encoding='utf-8') as f:
+             json.dump(leaderboard, f, indent=4, ensure_ascii=False)
+
+
+        print("\n🏆 ТАБЛИЦА РЕКОРДОВ (ТОП-3):")
+        for i, res in enumerate(leaderboard, 1): 
+            print(f"{i}. {res['name']}: {res['score']}")
         victory_sound.play()
         save_log("mission_complete")  # ✅ ОДИН РАЗ В КОНЦЕ!
         break
