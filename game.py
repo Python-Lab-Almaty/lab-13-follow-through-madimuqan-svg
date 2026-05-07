@@ -26,7 +26,7 @@ log = []
 def get_student_name():
     """Запрашивает имя студента"""
     screen = turtle.Screen()
-    name = screen.textinput("Student Name", "Enter your name:")
+    name = screen.textinput("Student Name", "madi")
     if not name or name.strip() == "":
         name = "anonymous"
     return name.strip().lower()
