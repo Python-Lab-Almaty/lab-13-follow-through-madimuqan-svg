@@ -422,7 +422,9 @@ while True:
         print("🎯 Reached B! RETURN TO A!")
         print(f"🟢 Теперь будут появляться препятствия!")
         going_forward = False
-        
+        for _ in range(18)
+            hero.left(10)
+            hero.forward(3)
         log.append({
             "event": "reached_goal_B",
             "x": hero.xcor(),
