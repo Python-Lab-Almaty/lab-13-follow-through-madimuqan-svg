@@ -1,15 +1,15 @@
-import turtle
+import turtle 
 import random
 import time
 import hashlib
 import os
-import jsone
-import winsound
+import json
+
 # ----------------------------
 # 🟢 КОНСТАНТЫ
 # ----------------------------
 WIDTH, HEIGHT = 1200, 800
-
+LIVES = 3
 # 🟢 ИНИЦИАЛИЗАЦИЯ ЛОГА
 log = []
 
@@ -19,7 +19,7 @@ log = []
 def get_student_name():
     """Запрашивает имя студента"""
     screen = turtle.Screen()
-    name = screen.textinput("Student Name", "Enter your name:")
+    name = screen.textinput("Регистрация","Введите имя студента:" "madi")
     if not name or name.strip() == "":
         name = "anonymous"
     return name.strip().lower()
@@ -221,7 +221,7 @@ def draw_all():
     else:
         draw_all.dynamic_drawers = []
     
-    if not hasattr(draw_all, 'static_drawn'):
+    if not hasattr(draw_all, 'lives_drawer'):
         for ox, oy, (w, h) in impassable_obstacles:
             drawer = turtle.Turtle()
             drawer.hideturtle()
@@ -418,7 +418,6 @@ while True:
     
     # Проверка достижения цели
     if going_forward and abs(hero.xcor() - goal[0]) < 40 and abs(hero.ycor() - goal[1]) < 40:
-        winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
         print("🎯 Reached B! RETURN TO A!")
         print(f"🟢 Теперь будут появляться препятствия!")
         going_forward = False
@@ -456,27 +455,39 @@ while True:
                 'steps': steps,
                 'date': time.strftime("%Y-%m-%d %H:%M:%S")
             }, f, indent=2)
-        victory_sound.play()
+        
         save_log("mission_complete")  # ✅ ОДИН РАЗ В КОНЦЕ!
         break
     
     # Столкновение
     collision = check_collision()
+
+
     if collision == "game_over":
-        print("💥 GAME OVER!")
-        print(f"🟩 Препятствий: {obstacles_spawned_count}")
+        LIVES -= 1 
         
-        log.append({
-            "event": "game_over",
-            "x": hero.xcor(),
-            "y": hero.ycor(),
-            "time": time.time()
-        })
-        
-        save_log("game_over")  # ✅ ОДИН РАЗ ПРИ GAME OVER!
-        break
-    
-    draw_all()
+        if LIVES > 0:
+            print(f"БАБАХ! Осталось жизней: {LIVES}")
+            hero.goto(-550, 350) # Телепортируем назад на старт
+            # Убираем break, чтобы цикл шел дальше!
+        else:
+           print("КОНЕЦ ИГРЫ! Жизни закончилось.")
+           log.append({
+               "event": "game_over",
+               "x": hero.xcor(),
+               "y": hero.ycor(),
+               "time": time.time()
+           })
+           save_log("game_over")  
+               while True: # Твой главный цикл игры
+        # ... тут какой-то код ...
+        draw_all()
+        hero.undo() 
+        hero.penup()
+        hero.goto(200, 350) 
+        hero.write(f"Жизни: {LIVES}", font=("Arial", 16, "bold"))
+        # ... тут остальной код цикла ...
+
     time.sleep(0.03)
 
 turtle.done()
