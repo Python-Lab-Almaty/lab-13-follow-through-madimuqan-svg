@@ -3,8 +3,12 @@ import random
 import time
 import hashlib
 import os
-import jsone
-import winsound
+import json
+try:
+    import winsound
+except ImportError:
+    winsound = None
+
 import json
 import os
 
@@ -421,11 +425,14 @@ while True:
     
     # Проверка достижения цели
     if going_forward and abs(hero.xcor() - goal[0]) < 40 and abs(hero.ycor() - goal[1]) < 40:
-        winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
+        if winsound:
+            winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
+
+
         print("🎯 Reached B! RETURN TO A!")
         print(f"🟢 Теперь будут появляться препятствия!")
         going_forward = False
-        for _ in range(18)
+        for _ in range(18):
             hero.left(10)
             hero.forward(3)
         log.append({
@@ -473,7 +480,9 @@ while True:
         print("\n🏆 ТАБЛИЦА РЕКОРДОВ (ТОП-3):")
         for i, res in enumerate(leaderboard, 1): 
             print(f"{i}. {res['name']}: {res['score']}")
-        victory_sound.play()
+            if winsound:
+                winsound.PlaySound("SystemExit", winsound.SND_ALIAS | winsound.SND_ASYNC)
+
         save_log("mission_complete")  # ✅ ОДИН РАЗ В КОНЦЕ!
         break
     
